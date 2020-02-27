@@ -1,2 +1,6 @@
-url: http://www.taobao.com
+url: https://detail.tmall.com/item.htm?id=21874619959&spm=a220o.1000855.w4023-14758550730.33.179c23ccZbJZCm
 driver: drivers/chromedriver.exe
+login_time: 1
+buy_button: 立即购买
+cart_button: 加入购物车
+oper: 【鲜活水盈套：洁面+水+乳+霜】+限量加赠水+面膜*2+便携3件套;【排浊滋养套：洁面+水+乳+霜+精华】+限量赠水+面膜*2+便携3件套
