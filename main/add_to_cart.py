@@ -28,13 +28,6 @@ class add_to_cart:
             else:
                 break
 
-        for oper in self.config['oper'].split(';'):
-            element = self.find_by_link_text(oper)
-            print(element)
-            if not element:
-                continue
-            self.click(element)
-
         try:
             seconds_delta = (self.config['op_time'] - datetime.now()).seconds
             if seconds_delta > 0:
@@ -42,23 +35,43 @@ class add_to_cart:
                 time.sleep(seconds_delta)
         except Exception as e:
             print(e)
+
+        while not self.find_element_by_id('J_LinkBuy'):
+            self.browser.refresh()
+
+        if self.config.get('oper'):
+            for oper in self.config['oper'].split(';'):
+                element = self.find_by_link_text(oper)
+                print(element)
+                if not element:
+                    continue
+                self.click(element)
+
         print('start to next op')
         if self.config.get('is_cart', False):
             self.op_cart()
         if self.config.get('is_buy', False):
-            self.op_buy()
+            while True:
+                flag = self.op_buy()
+                if flag:
+                    break
+                self.browser.refresh()
             for i in range(60):
                 try:
                     self.browser.find_element_by_class_name('go-btn').click()
-                    breakpoint()
                 except Exception as e:
                     print(e)
                     time.sleep(1)
                     continue
 
     def op_buy(self):
-        element = self.browser.find_element_by_id('J_LinkBuy')
-        self.click(element)
+        try:
+            element = self.browser.find_element_by_id('J_LinkBuy')
+            self.click(element)
+            return True
+        except Exception as e:
+            print(e)
+            return False
 
     def op_cart(self):
         element = self.browser.find_element_by_id('J_LinkBasket')
@@ -68,6 +81,16 @@ class add_to_cart:
         from selenium.common.exceptions import NoSuchElementException
         try:
             element = self.browser.find_element_by_name(name)
+        except NoSuchElementException as e:
+            print(e)
+            return False
+        else:
+            return element
+
+    def find_element_by_id(self, id):
+        from selenium.common.exceptions import NoSuchElementException
+        try:
+            element = self.browser.find_element_by_id(id)
         except NoSuchElementException as e:
             print(e)
             return False

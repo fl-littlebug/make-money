@@ -1,8 +1,8 @@
-url: https://detail.tmall.com/item.htm?id=21874619959&spm=a220o.1000855.w4023-14758550730.33.179c23ccZbJZCm
+url: https://detail.tmall.com/item.htm?spm=a1z0d.6639537.1997196601.4.52227484j3f4UC&id=612835759062
 driver: drivers/chromedriver.exe
 login_time: 1
 buy_button: 立即购买
 cart_button: 加入购物车
-op_time: 2020-02-29 16:52:00
-oper: 【滋养亮颜套：洁面+水+乳+霜+眼霜+BB霜】+限量赠爽肤水
+op_time: 2020-02-29 22:00:00
+oper: False
 is_buy: True
