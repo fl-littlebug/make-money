@@ -3,6 +3,6 @@ driver: drivers/chromedriver.exe
 login_time: 1
 buy_button: 立即购买
 cart_button: 加入购物车
-op_time: 2020-02-29 15:41:00
+op_time: 2020-02-29 16:52:00
 oper: 【滋养亮颜套：洁面+水+乳+霜+眼霜+BB霜】+限量赠爽肤水
-is_cart: True
+is_buy: True
