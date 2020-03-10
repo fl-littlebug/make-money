@@ -2,6 +2,7 @@
 import yaml
 import time
 import sys
+from datetime import datetime
 from selenium import webdriver
 
 class clear_cart:
@@ -11,30 +12,78 @@ class clear_cart:
         self.browser = webdriver.Chrome(executable_path=self.config['driver'])
 
     def login(self):
-        element = self.find_element_by_class_name('sn-login')
-        if element:
-            element.click()
-        time.sleep(self.config['login_time'])
-
-    def run(self):
-        self.browser.get(self.config['url'])
         while True:
             ok = self.find_element_by_class_name('sn-login')
-            ok1 = self.find_by_text(self.config['buy_button'])
-            ok2 = self.find_by_text(self.config['cart_button'])
-            print(ok, ok1, ok2)
-            if ok or not ok1 and not ok2:
-                self.login()
+            ok1 = self.find_element_by_id('J_Go')
+            if ok or not ok1:
+                element = self.find_element_by_class_name('sn-login')
+                if element:
+                    element.click()
+                time.sleep(self.config['login_time'])
             else:
                 break
 
-        for oper in self.config['oper'].split(';'):
-            element = self.find_by_link_text(oper)
-            print(element)
-            if not element:
-                continue
-            print('click')
-            self.click(element)
+    def buy(self):
+        try:
+            element = self.find_element_by_id('J_Go')
+            if element:
+                element.click()
+                return True
+            else:
+                return False
+        except Exception as e:
+            print(e)
+            return False
+
+    def select_all(self):
+        element = self.browser.find_element_by_class_name('cart-checkbox')
+        try:
+            if element:
+                element.click()
+                return element.find_element_by_xpath('input').is_selected()
+        except Exception as e:
+            print(e)
+            return False
+        return True
+
+    def submit_order(self):
+        element = self.browser.find_element_by_class_name('go-btn')
+        try:
+            if element:
+                element.click()
+        except Exception as e:
+            print(e)
+            return False
+        return True
+
+    def run(self):
+        self.browser.get(self.config['url'])
+        self.login()
+        try:
+            print(self.config['op_time'])
+            print((self.config['op_time'] - datetime.now()).microseconds)
+            seconds_delta = (self.config['op_time'] - datetime.now()).total_seconds()
+            if seconds_delta > 0:
+                print('wait {}s'.format(seconds_delta))
+                time.sleep(seconds_delta)
+        except Exception as e:
+            print(e)
+        for i in range(10):
+            ok = self.select_all()
+            if ok:
+                for j in range(20):
+                    ok = self.buy()
+                    if ok:
+                        break
+                    time.sleep(0.1)
+            if ok:
+                break
+            self.browser.refresh()
+        for i in range(10):
+            ok = self.submit_order()
+            if ok:
+                break
+
 
     def find_element_by_name(self, name):
         from selenium.common.exceptions import NoSuchElementException
@@ -50,6 +99,16 @@ class clear_cart:
         from selenium.common.exceptions import NoSuchElementException
         try:
             element = self.browser.find_element_by_class_name(name)
+        except NoSuchElementException as e:
+            print(e)
+            return False
+        else:
+            return element
+
+    def find_element_by_id(self, id):
+        from selenium.common.exceptions import NoSuchElementException
+        try:
+            element = self.browser.find_element_by_id(id)
         except NoSuchElementException as e:
             print(e)
             return False
@@ -77,16 +136,7 @@ class clear_cart:
         else:
             return element
 
-    def click(self, element):
-        self.browser.execute_script("arguments[0].click();", element)
-        # from selenium.common.exceptions import ElementClickInterceptedException
-        # try:
-        #     element.click()
-        # except ElementClickInterceptedException as e:
-        #     print(e)
-        #     self.browser.execute_script("arguments[0].click();", element)
-
 
 if __name__ == '__main__':
-    model = clear_cart('test')
+    model = clear_cart(sys.argv[1])
     model.run()
