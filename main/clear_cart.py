@@ -35,11 +35,20 @@ class clear_cart:
             print(e)
             return False
 
+    def check_select_all(self):
+        try:
+            self.browser.find_element_by_xpath("//div[@class='shop-info']/div[@class='cart-checkbox ']")
+            return True
+        except Exception as e:
+            print(e)
+            return False
+
     def select_all(self):
         element = self.browser.find_element_by_class_name('cart-checkbox')
         try:
             if element:
                 element.click()
+                time.sleep(1)
                 return element.find_element_by_xpath('input').is_selected()
         except Exception as e:
             print(e)
@@ -59,27 +68,30 @@ class clear_cart:
     def run(self):
         self.browser.get(self.config['url'])
         self.login()
-        try:
-            print(self.config['op_time'])
-            print((self.config['op_time'] - datetime.now()).microseconds)
-            seconds_delta = (self.config['op_time'] - datetime.now()).total_seconds()
-            if seconds_delta > 0:
-                print('wait {}s'.format(seconds_delta))
-                time.sleep(seconds_delta)
-        except Exception as e:
-            print(e)
-        for i in range(10):
-            ok = self.select_all()
+        if 'op_time' in self.config:
+            try:
+                print(self.config['op_time'])
+                print((self.config['op_time'] - datetime.now()).microseconds)
+                seconds_delta = (self.config['op_time'] - datetime.now()).total_seconds()
+                if seconds_delta > 0:
+                    print('wait {}s'.format(seconds_delta))
+                    time.sleep(seconds_delta)
+            except Exception as e:
+                print(e)
+        while True:
+            ok = self.check_select_all()
             if ok:
-                for j in range(20):
-                    ok = self.buy()
-                    if ok:
-                        break
-                    time.sleep(0.1)
+                print('items are ready!')
+                break
+            print('items are not ready!')
+            time.sleep(0.1)
+        self.select_all()
+        while True:
+            ok = self.buy()
+            print('buy :', ok)
             if ok:
                 break
-            self.browser.refresh()
-        for i in range(10):
+        while True:
             ok = self.submit_order()
             if ok:
                 break
