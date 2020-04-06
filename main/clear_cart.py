@@ -86,15 +86,15 @@ class clear_cart:
             print('items are not ready!')
             time.sleep(0.1)
         self.select_all()
-        while True:
+        while not self.submit_order():
             ok = self.buy()
             print('buy :', ok)
             if ok:
                 break
-        while True:
-            ok = self.submit_order()
-            if ok:
-                break
+        # while True:
+        #     ok = self.submit_order()
+        #     if ok:
+        #         break
 
 
     def find_element_by_name(self, name):
